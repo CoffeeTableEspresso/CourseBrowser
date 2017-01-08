@@ -18,10 +18,11 @@ while True:
                   "description or dsc:  print the description of current course.\n" +
                   "title or ttl:        print the title of current course.\n" +
                   "info or i:           print title, description, prereqs, coreqs, postreqs for current course.\n" +
-                  #"info+ or i+:        print info plus postreqs.\n" +
+                  "tree or tr:          print tree of prereqs.\n" +
                   "grade or gr:         print grade received in course if available.\n" +
-                  "reload or rl:        reload all info for current course.\n"
-                  "mc:                  print all courses user has taken, plus grades.\n")
+                  "reload or rl:        reload all info for current course.\n" +
+                  "mc:                  print all courses user has taken, plus grades.\n"
+                  "quit or q:           exit program.\n")
             do = do[1:]
         elif do[0].lower() == "goto":
             try:
@@ -99,6 +100,8 @@ while True:
                 print colored(str(c), 'green') + ": " + str(courses[c])
             print ""
             do = do[1:]
+        elif do[0].lower() == "quit" or do[0].lower() == "q":
+            raise SystemExit
         else:
             print "Unknown Command\n"
             break
