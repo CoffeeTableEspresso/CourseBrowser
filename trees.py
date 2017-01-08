@@ -47,14 +47,6 @@ class Node(object):
                     #if node.name != "" and len(node.children) != 0:
                         node.printtree(level+1)
 
-'''def getprereqnode(name):
-    try:
-        parsed = parse_prereq(CourseMaster().getprereqs(name))
-        evaled = eval(tree_sub(parsed.strip(",")))
-        return evaled.setname(name)
-    except ParseException:
-        return Node(name)'''
-
 def andornodefactory(andor):
     if andor != "or" and andor != "and":
         raise AndOrException
