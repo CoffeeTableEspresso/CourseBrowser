@@ -10,13 +10,10 @@ Set-up: create a file named "courses.txt", containing on each line, a coursecode
 followed by a space, followed by a grade.  These are all the courses the user
 has taken.  (Note: this will likely be updated eventually to have a login to
 the UBC SSC, which would let CourseBrowser automatically get this info, but for
-now it is merely stored in a text file.)  An example of a few lines of a
+now it is merely stored in a text file.)  An example of a line of a
 course.txt file is as follows:
 
 MATH223 92
-MATH226 84
-GERM100 92
-CPSC210 94
 
 Usage: run "main.py".  Type "help" or "h" (no quotes) for list of available
 commands.
