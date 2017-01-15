@@ -7,15 +7,7 @@ class Borg(object):
     def __init__(self):
         self.__dict__ = self._shared_state
 
-class MetaCourse(type):
-    def __new__(cls, name, parents, dct):
-        if 'class_id' not in dct: dct['class_id'] = name.lower()
-        if 'code' in dct: pass
-        return super(MetaCourse, cls).__new__(cls, name, parents, dct)
-
-
 class CourseMaster(Borg):
-    __metaclass__ = MetaCourse
     prereqs  = {}
     coreqs   = {}
     postreqs = {}
@@ -90,38 +82,3 @@ class CourseMaster(Borg):
         if name not in self.descriptions:
             self.loadinfo(name)
         return self.descriptions[name]
-
-'''class Course(object):
-    def __init__(self, name):
-        self.name = name
-        self.prereqs     = CourseMaster().getprereqs(name)
-        self.coreqs      = CourseMaster().getcoreqs(name)
-        self.postreqs    = CourseMaster().getpostreqs(name)
-        self.description = CourseMaster().getdescription(name)
-        self.title       = CourseMaster().gettitle(name)'''
-
-
-
-'''print "loading"
-print CourseMaster().getpostreqs("MATH223")
-print "loading"
-print CourseMaster().getpostreqs("MATH223")'''
-'''math215 = Course("MATH215")
-print math223, math223.code
-print math221, math221.code
-print math215, math215.code
-math221.code = 'MATH221'
-print math223, math223.code
-print math221, math221.code
-print math215, math215.code'''
-
-#MATH412 = InterfaceMeta('MATH412', (), dict(pagename='MATH412'))
-
-'''
-a = Example('Lara')
-b = Example()
-print a, b
-c = Example('Boris')
-print a, b, c
-b.name = 'Marcel'
-print a, b, c '''

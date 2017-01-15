@@ -3,6 +3,8 @@ from parseprereqs import courses, parse_prereq, tree_sub
 from termcolor import colored
 from errors import ParseException, AndOrException
 from coursemaster import CourseMaster
+import courses
+
 
 class Node(object):
     def __init__(self, name):
@@ -19,12 +21,13 @@ class Node(object):
     def setname(self, name):
         self.name = name
         return self
-    def printtree(self, level=0):
-        try: year = int(self.name[4])
+    def printtree(self, level=0, year=1):
+        try: courseyear = int(self.name[4])
         except IndexError:
-            year = None
-        if (self.name == "" and self.children == []):# or year < 2:
+            courseyear = None
+        if (self.name == "" and self.children == []):#or year < 2:
             pass
+        if courseyear < year and self.name != "": pass
         else:
             for i in range(level-1): stdout.write("    ")
             if level > 0:
@@ -32,8 +35,10 @@ class Node(object):
                 if self.andor == "or":    stdout.write("`+--")
                 elif self.andor == "and":   stdout.write("`+==")
                 else: assert False
-            if self.name in courses:
+            if courses.Course(self.name).completed():
                 stdout.write(colored(self.name, 'green'))
+            elif courses.Course(self.name).meetsprereqs():
+                stdout.write(colored(self.name, 'blue'))
             else:
                 stdout.write(colored(self.name, 'red'))
             if int(self.score) > 50:
@@ -41,11 +46,11 @@ class Node(object):
             stdout.write("\n")
             if len(self.children) == 1:
                 self.children[0].andor = "or"
-                self.children[0].printtree(level+1)
+                self.children[0].printtree(level+1,year)
             else:
                 for node in self.children:
                     #if node.name != "" and len(node.children) != 0:
-                        node.printtree(level+1)
+                        node.printtree(level+1,year)
 
 def andornodefactory(andor):
     if andor != "or" and andor != "and":
@@ -90,20 +95,3 @@ def getprereqnode(name):
     except ParseException:
         CourseMaster().settree(Node(name), name)
         return Node(name)
-
-#while "running":
-#    getprereqnode(raw_input("course? \n>> ")).printtree()
-'''andnode( ornode( andnode( "MATH121"), andnode( ornode( "MATH101", "MATH103", "MATH105", "SCIE001", grade=68)), grade=50)).setname("MATH223").printtree()
-
-MATH120 = Node("MATH120")
-MATH121 = Node("MATH121").addchild(MATH120, "or", 68)
-MATH223 = Node("MATH223").addchild(MATH121, "or", 68)
-MATH226 = Node("MATH226").addchild(MATH121,"or", 68)
-
-MATH320 = Node("MATH320").addchild(MATH226, "or", 68)
-MATH322 = Node("MATH322").addchild(MATH223, "or", 68)
-
-MATH412 = Node("MATH412").addchild(MATH320, "and", 68).addchild(MATH322, "and", 68)
-
-MATH412.printtree()
-'''

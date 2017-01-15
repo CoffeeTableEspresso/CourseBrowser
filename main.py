@@ -1,4 +1,5 @@
 from courses import Course
+from depts import Dept
 from termcolor import colored
 from parseprereqs import courses
 
@@ -18,9 +19,10 @@ while True:
                   "description or dsc:  print the description of current course.\n" +
                   "title or ttl:        print the title of current course.\n" +
                   "info or i:           print title, description, prereqs, coreqs, postreqs for current course.\n" +
-                  "tree or tr:          print tree of prereqs.\n" +
+                  "tree or tr [OARG]:   print tree of prereqs. optional [OARG] specifies the lowest year level to include in tree; defaults to 1.\n" +
                   "grade or gr:         print grade received in course if available.\n" +
                   "reload or rl:        reload all info for current course.\n" +
+                  "showall or sa [ARG1] [ARG2]:       show all courses in dept [ARG1] in year level [ARG2].\n" +
                   "mc:                  print all courses user has taken, plus grades.\n"
                   "quit or q:           exit program.\n")
             do = do[1:]
@@ -44,14 +46,22 @@ while True:
                 print colored("Error parsing, we're sorry.\n", 'red')
             do = do[1:]
         elif do[0].lower() == "tree" or do[0].lower() == "tr":
-            course.loadtree()
-            course.printtree()
+            try:
+                year = int(do[1])
+                do = do[1:]
+            except (IndexError, ValueError):
+                year = 1
+            try:
+                course.loadtree()
+                course.printtree(year=year)
+            except AttributeError:
+                print "You have not selected a course.\n"
             do = do[1:]
         elif do[0].lower() == "postreqs" or do[0].lower() == "por":
             course.loadpostreqs()
             print "Post-reqs: " + ", ".join(course.postreqs)
             do = do[1:]
-        elif do[0].lower() == "title" or do[0].lower() == "t":
+        elif do[0].lower() == "title" or do[0].lower() == "ttl":
             course.loadtitle()
             try:
                 print course.title + "\n"
@@ -94,6 +104,21 @@ while True:
         elif do[0].lower() == "reload" or do[0].lower() == "rl":
             course.loadinfo()
             do = do[1:]
+        elif do[0].lower() == "showall" or do[0].lower() == "sa":
+            try:
+                for course in Dept(do[1]).getyear(int(do[2])):
+                    course.loadtitle()
+                    course.loadprereqs()
+                    if course.name in courses:
+                        print colored(course.title, 'green')
+                    elif course.meetsprereqs():
+                        print colored(course.title, 'blue')
+                    else:
+                        print colored(course.title, 'red')
+            except (IndexError, ValueError):
+                print "Please specify dept and year level."
+            do = do[3:]
+
         elif do[0].lower() == "mc":
             print "My Courses:"
             for c in courses:
@@ -103,5 +128,5 @@ while True:
         elif do[0].lower() == "quit" or do[0].lower() == "q":
             raise SystemExit
         else:
-            print "Unknown Command\n"
+            print "Unknown Command: %s\n" % do[0]
             break

@@ -25,7 +25,7 @@ class Course(object):
         self.postreqs    = None
         self.description = None
         self.title       = None
-        self.loaded = False
+        self.tree = None
         if not lazy:
             self.loadinfo()
     def loadinfo(self):
@@ -36,13 +36,16 @@ class Course(object):
         self.loadpostreqs()
     def meetsprereqs(self):
         meets = True
+        if self.prereqs == None: self.loadprereqs()
         try:
             #print parse_prereq(self.prereqs)
             meets = eval(sub_prereq(parse_prereq(self.prereqs).strip(",").replace(",", ", "))) >= 50
         except ParseException:
             meets = True
-            print colored("UNABLE TO PARSE", 'red')
+            #print colored("UNABLE TO PARSE: " + self.name, 'red')
         return meets
+    def completed(self):
+        return self.name in courses
     def loadprereqs(self):
         self.prereqs = CourseMaster().getprereqs(self.name)
     def loadcoreqs(self):
@@ -55,9 +58,9 @@ class Course(object):
         self.description = CourseMaster().getdescription(self.name)
     def loadtree(self):
         self.tree = getprereqnode(self.name)
-    def printtree(self):
+    def printtree(self,year):
         try:
-            self.tree.printtree()
+            self.tree.printtree(year=year)
         except TypeError:
             print "Tree unavailable."
     def print_info(self):
@@ -68,6 +71,8 @@ class Course(object):
         print "Post-reqs: " + ", ".join(self.postreqs)
     def print_prereqs(self):
         print "Pre-reqs: " + self.prereqs
-        if self.meetsprereqs():
-            print colored("You have the required pre-reqs", 'green')
+        if self.completed():
+            print colored("You have completed this course", 'green')
+        elif self.meetsprereqs():
+            print colored("You have the required pre-reqs", 'blue')
         else: print colored("You do not have the required pre-reqs", 'red')
