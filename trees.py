@@ -32,8 +32,8 @@ class Node(object):
             for i in range(level-1): stdout.write("    ")
             if level > 0:
                 #if len(self.children) == 1: stdout.write("`+--")
-                if self.andor == "or":    stdout.write("`+--")
-                elif self.andor == "and":   stdout.write("`+==")
+                if self.andor == "or":    stdout.write("+---")
+                elif self.andor == "and":   stdout.write("+===")
                 else: assert False
             if courses.Course(self.name).completed():
                 stdout.write(colored(self.name, 'green'))
@@ -68,7 +68,6 @@ def andornodefactory(andor):
             return args[0]
         try:
             for arg in args:
-                #print arg
                 if type(arg) is str:
                     child = getprereqnode(arg).setname(arg)
                 else:

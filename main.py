@@ -3,6 +3,22 @@ from depts import Dept
 from termcolor import colored
 from parseprereqs import courses
 
+helpmenu = """goto or g [ARG]:    change current course to [ARG].
+prereqs or prr:      print the prereqs for current course.
+coreqs or cor:       print the coreqs for current course.
+postreqs or por:     print the postreqs for current course.
+description or dsc:  print the description of current course.
+title or ttl:        print the title of current course.
+info or i:           print title, description, prereqs, coreqs, postreqs for current course.
+info- or i-:         print title, description, prereqs, coreqs for current course.
+tree or tr [OARG]:   print tree of prereqs. optional [OARG] specifies the lowest year level to include in tree; defaults to 1.
+grade or gr:         print grade received in course if available.
+reload or rl:        reload all info for current course.
+showall or sa [ARG1] [ARGS]:       show all courses in dept [ARG1] for each year in [ARGs]. e.g. 'sa cpsc 3 4' shows all 3rd and
+                     4th year cpsc courses.
+mc:                  print all courses user has taken, plus grades.
+quit or q:           exit program.\n"""
+
 location, course = "", None
 while True:
     do = raw_input(location + ":\n>> ")
@@ -12,28 +28,12 @@ while True:
         #print do
         if do[0] == "": do = do[1:]
         elif do[0].lower() == "help" or do[0].lower() == "h":
-            print ("goto [ARG]:         change current course to [ARG].\n" +
-                  "prereqs or prr:      print the prereqs for current course.\n" +
-                  "coreqs or cor:       print the coreqs for current course.\n" +
-                  "postreqs or por:     print the postreqs for current course.\n" +
-                  "description or dsc:  print the description of current course.\n" +
-                  "title or ttl:        print the title of current course.\n" +
-                  "info or i:           print title, description, prereqs, coreqs, postreqs for current course.\n" +
-                  "tree or tr [OARG]:   print tree of prereqs. optional [OARG] specifies the lowest year level to include in tree; defaults to 1.\n" +
-                  "grade or gr:         print grade received in course if available.\n" +
-                  "reload or rl:        reload all info for current course.\n" +
-                  "showall or sa [ARG1] [ARG2]:       show all courses in dept [ARG1] in year level [ARG2].\n" +
-                  "mc:                  print all courses user has taken, plus grades.\n"
-                  "quit or q:           exit program.\n")
+            print helpmenu
             do = do[1:]
-        elif do[0].lower() == "goto":
-            try:
-                course = Course(do[1].upper())
-                #course.print_info()
-                location = course.name
-                print (location + ":")
-            except IndexError:
-                print "Not a valid course: %s. \nPlease try again.\n" % do[1].upper()
+        elif do[0].lower() == "goto" or do[0].lower() == "g":
+            course = Course(do[1].upper())
+            location = course.name
+            print (location + ":")
             do = do[2:]
         elif do[0].lower() == "prereqs" or do[0].lower() == "prr":
             course.loadprereqs()
@@ -59,7 +59,7 @@ while True:
             do = do[1:]
         elif do[0].lower() == "postreqs" or do[0].lower() == "por":
             course.loadpostreqs()
-            print "Post-reqs: " + ", ".join(course.postreqs)
+            print "Post-reqs: " + ", ".join(course.postreqs) + "\n"
             do = do[1:]
         elif do[0].lower() == "title" or do[0].lower() == "ttl":
             course.loadtitle()
@@ -92,6 +92,22 @@ while True:
             except KeyError:
                 print colored("Error parsing, we're sorry.\n", 'red')
             do = do[1:]
+        elif do[0].lower() == "info-" or do[0].lower() == "i-":
+            course.loadtitle()
+            course.loaddescription()
+            course.loadprereqs()
+            course.loadcoreqs()
+            try:
+                print course.title + ":"
+                print course.description
+                course.print_prereqs()
+                print "Co-reqs:  " + course.coreqs
+                print ""
+            except AttributeError:
+                print "You have not selected a course.\n"
+            except KeyError:
+                print colored("Error parsing, we're sorry.\n", 'red')
+            do = do[1:]
         elif do[0].lower() == "grade" or do[0].lower() ==  "gr":
             try:
                 if course.name in courses:
@@ -117,8 +133,11 @@ while True:
                         print colored(course.title, 'red')
             except (IndexError, ValueError):
                 print "Please specify dept and year level."
-            do = do[3:]
-
+            try:
+                int(do[3])
+                do = do[0:2] + do[3:]
+            except (IndexError, ValueError):
+                do = do[3:]
         elif do[0].lower() == "mc":
             print "My Courses:"
             for c in courses:

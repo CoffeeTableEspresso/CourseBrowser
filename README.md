@@ -20,6 +20,6 @@ Usage: run "main.py".  Type "help" or "h" (no quotes) for list of available
 commands.
 
 dependencies:
-  termcolor
-  lxml
+  termcolor,
+  lxml,
   requests

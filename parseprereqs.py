@@ -103,18 +103,3 @@ def oneof(*args, **kwargs):
     except KeyError:
         grade = 50
     return (max(args) >= grade)*max(args)
-
-#print allof(59, 50, 10, 19, grade=6)
-
-
-#tree_sub(parse_prereq("Either (a) MATH 121 or (b) a score of 68% or higher in one of MATH 101, MATH 103, MATH 105, SCIE 001."))
-#first example, for MATH424, doesn't work
-#print_prereq("Either (a) a score of 68% or higher in MATH 223 or (b) a score of 80% or higher in one of MATH 152, MATH 221; and either (a) a score of 68% or higher in MATH 227 or (b) a score of 80% or higher in one of MATH 217, MATH 263, MATH 317. ")
-#print eval(sub_prereq(parse_prereq("One of MATH 300, MATH 305 and one of MATH 215, MATH 255, MATH 256, MATH 265. ").strip(",").replace(",", ", ")))
-#print_prereq("Either (a) MATH 121 or (b) a score of 68% or higher in one of MATH 101, MATH 103, MATH 105, SCIE 001.")
-#print_prereq("Either (a) a score of 68% or higher in MATH 226 or (b) one of MATH 200, MATH 217, MATH 226, MATH 253, MATH 263 and a score of 80% or higher in MATH 220. ")
-#print parse_prereq("A score of 68% or higher in all of MATH 320, MATH 322.")
-#print parse_prereq("A score of 68% or higher in MATH 226.")
-#print parse_prereq("One of MATH 200, MATH 217, MATH 226, MATH 253, MATH 263.")
-#print parse_prereq("Either (a) MATH 121 or (b) a score of 68% or higher in one of MATH 101, MATH 103, MATH 105, SCIE 001.")
-#print parse_prereq("Either (a) MATH 121 or (b) a score of 68% or higher in one of MATH 101, MATH 103, MATH 105, SCIE 001. ")

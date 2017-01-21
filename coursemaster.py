@@ -1,11 +1,7 @@
 from lxml import html, etree
 import requests
 from errors import MissingException
-
-class Borg(object):
-    _shared_state = {}
-    def __init__(self):
-        self.__dict__ = self._shared_state
+from borg import Borg
 
 class CourseMaster(Borg):
     prereqs  = {}

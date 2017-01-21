@@ -11,11 +11,8 @@ with open("courses.txt") as f:
 courses = {}
 i = 0
 while i < len(courseslist):
-    #print 'blah;'
     courses[courseslist[i].split()[0]] = courseslist[i].split()[1].strip()
-    #courses[i] = courses[i][:-1] ### .strip("")
     i += 1
-#print courses
 
 class Course(object):
     def __init__(self, name, lazy=True):
@@ -38,11 +35,9 @@ class Course(object):
         meets = True
         if self.prereqs == None: self.loadprereqs()
         try:
-            #print parse_prereq(self.prereqs)
             meets = eval(sub_prereq(parse_prereq(self.prereqs).strip(",").replace(",", ", "))) >= 50
         except ParseException:
             meets = True
-            #print colored("UNABLE TO PARSE: " + self.name, 'red')
         return meets
     def completed(self):
         return self.name in courses
