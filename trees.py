@@ -94,3 +94,15 @@ def getprereqnode(name):
     except ParseException:
         CourseMaster().settree(Node(name), name)
         return Node(name)
+
+def getpostreqnode(name):
+    name = name.upper()
+    #if name in CourseMaster().potrees:
+    #   return CourseMaster().getpotree(name)
+    node = Node(name)
+    if name not in CourseMaster().postreqs: CourseMaster().loadpostreqs(name)
+    for course in CourseMaster().postreqs[name]:
+        print "\033[K", "\r", "loading: " + name,
+        stdout.flush()
+        node.addchild(getpostreqnode(course), "or")
+    return node

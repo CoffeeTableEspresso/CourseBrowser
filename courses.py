@@ -3,7 +3,7 @@ from parseprereqs import parse_prereq, sub_prereq, allof, oneof
 from sys import stdout
 from errors import ParseException
 from coursemaster import CourseMaster
-from trees import getprereqnode
+from trees import getprereqnode, getpostreqnode
 
 
 with open("courses.txt") as f:
@@ -23,6 +23,7 @@ class Course(object):
         self.description = None
         self.title       = None
         self.tree = None
+        self.potree = None
         if not lazy:
             self.loadinfo()
     def loadinfo(self):
@@ -53,9 +54,17 @@ class Course(object):
         self.description = CourseMaster().getdescription(self.name)
     def loadtree(self):
         self.tree = getprereqnode(self.name)
+    def loadpotree(self):
+        #if self.postreqs == None: self.loadpostreqs()
+        self.potree = getpostreqnode(self.name)
     def printtree(self,year):
         try:
             self.tree.printtree(year=year)
+        except TypeError:
+            print "Tree unavailable."
+    def printpotree(self):
+        try:
+            self.potree.printtree()
         except TypeError:
             print "Tree unavailable."
     def print_info(self):
