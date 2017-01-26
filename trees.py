@@ -41,7 +41,7 @@ class Node(object):
                 stdout.write(colored(self.name, 'blue'))
             else:
                 stdout.write(colored(self.name, 'red'))
-            if int(self.score) > 50:
+            if int(self.score) > 50 and self.name != "":
                 stdout.write("[" + str(self.score) + "]")
             stdout.write("\n")
             if len(self.children) == 1:
@@ -90,7 +90,7 @@ def getprereqnode(name):
         evaled = eval(tree_sub(parsed.strip(",")))
         evaled.setname(name)
         CourseMaster().settree(evaled, name)
-        return evaled.setname(name)
+        return evaled
     except ParseException:
         CourseMaster().settree(Node(name), name)
         return Node(name)
@@ -105,4 +105,5 @@ def getpostreqnode(name):
         print "\033[K", "\r", "loading: " + name,
         stdout.flush()
         node.addchild(getpostreqnode(course), "or")
+    CourseMaster().setpotree(node, name)
     return node

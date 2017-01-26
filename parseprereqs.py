@@ -56,7 +56,7 @@ def parse_prereq(prereq):
     return running + '),'
 
 
-def sub_prereq(prereq):
+def sub_prereq(prereq, courses=courses):
     #print prereq
     thing = prereq.split(" ")
     #print thing

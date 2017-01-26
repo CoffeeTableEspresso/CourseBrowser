@@ -10,6 +10,8 @@ class CourseMaster(Borg):
     descriptions = {}
     titles = {}
     trees = {}
+    potrees = {}
+    terms = {}
     def __init__(self):
         Borg.__init__(self)
     def loadinfo(self, name):
@@ -29,6 +31,31 @@ class CourseMaster(Borg):
         except IndexError:
             self.descriptions[name] = ""
             self.titles[name] = ""
+
+        #print tdd[0].text_content(), len(tdd[0])#: print len(tdd), td.text_content()
+    def loadterms(self, name):
+
+        page = requests.get("https://courses.students.ubc.ca/cs/main?pname=subjarea&tname=subjareas&req=3&dept=" + name[0:4] \
+                +"&course=" + name[4:])
+        tree = html.fromstring(page.content)
+        tdd  = tree.xpath('//table[@class="table table-striped section-summary"]')
+        button = tree.xpath('//button[@class="btn btn-primary"]')
+        for btn in button:
+            if btn.text_content().startswith("Session"):
+                #print btn.text_content()
+                terms = [btn.text_content().strip("Session:").strip()]
+        try:
+            td = tdd[0]
+            for tr in td:
+                for x in tr:
+                    if x.text_content() == "2":
+                        terms.append(2) 
+                    if x.text_content() == "1":
+                        terms.append(1)
+                        #print "Section available in term: " + x.text_content()
+        except IndexError:
+	    pass
+        self.terms[name] = terms
     def loadpostreqs(self, name):
         page = requests.get("https://courses.students.ubc.ca/cs/main?pname=subjarea&req=1&dept=" + name[:4])
         tree = html.fromstring(page.content)
@@ -44,6 +71,8 @@ class CourseMaster(Borg):
         self.postreqs[name] = postreqs
     def settree(self, name, tree):
         self.trees[name] = tree
+    def setpotree(self, name, tree):
+        self.potrees[name] = tree
     def getprereqlist(self, name):
             #print self.getprereqs(name)
             prereqbadlist = iter(self.getprereqs(name).split())
@@ -58,6 +87,10 @@ class CourseMaster(Borg):
         if name not in self.trees:
             raise MissingException
         return self.trees[name]
+    def getpotree(self, name):
+        if name not in self.potrees:
+            raise MissingException
+        return self.potrees[name]
     def getprereqs(self, name):
         if name not in self.prereqs:
             self.loadinfo(name)
@@ -78,3 +111,7 @@ class CourseMaster(Borg):
         if name not in self.descriptions:
             self.loadinfo(name)
         return self.descriptions[name]
+    def getterm(self, name):
+        if name not in self.terms:
+            self.loadterms(name)
+        return self.terms[name]

@@ -3,6 +3,7 @@ from depts import Dept
 from termcolor import colored
 from parseprereqs import courses
 from sys import stdout
+from timetable import TimeTableMaster
 
 helpmenu = """goto or g [ARG]:        change current course to [ARG].
 showall or
@@ -19,11 +20,12 @@ info- or i-:            print title, description, prereqs, coreqs for current co
 reload or rl:           reload all info for current course.
 
 prereqtree or tree or
-prtree or tr [OARG]:    print tree of prereqs. optional [OARG] specifies the lowest year level to
+prtree or tr or
+prtr [OARG]:            print tree of prereqs. optional [OARG] specifies the lowest year level to
                         include in tree; defaults to 1.
 postreqtree or potree
-or potr:                print tree of all postreqs. of given course.  WARNING: MAY TAKE A VERY LONG
-                        TIME TO LOAD, ESPECIALLY FOR LOWER LEVEL COURSES.
+or potr:                print tree of all postreqs for current course.  WARNING: MAY TAKE A VERY
+                        LONG TIME TO LOAD, ESPECIALLY FOR LOWER LEVEL COURSES.
 
 grade or gr:            print grade received in course if available.
 mc:                     print all courses user has taken, plus grades.
@@ -43,6 +45,10 @@ while True:
             print helpmenu
             do = do[1:]
         elif do[0].lower() == "goto" or do[0].lower() == "g":
+	    if len(do) == 1:
+		do = do[1:]
+		print ""
+		break
             course = Course(do[1].upper())
             location = course.name
             print "" #(location + ":")
@@ -57,7 +63,32 @@ while True:
             except KeyError:
                 print colored("Error parsing, we're sorry.\n", 'red')
             do = do[1:]
-        elif do[0].lower() == "tree" or do[0].lower() == "tr" or do[0].lower() == "prereqtree" or do[0].lower() == "prtr":
+        elif do[0].lower() == "terms" or do[0].lower() == "trm":
+            course.loadterm()
+            course.print_term()
+	    print ""
+            do = do[1:]
+        elif do[0].lower() == "setdelay" or do[0].lower() == "sd":
+            try:
+                course.delay = do[1]
+                #print course.name
+                print course.name + " delayed until term " + course.delay + ".\n"
+                do = do[1:]
+            except IndexError:
+                print "sd requires an argument.\n"
+            except AttributeError:
+                print "You have not selected a course.\n"
+                do = do[1:]
+            do = do[1:]
+        elif do[0].lower() == "add":
+            try:
+                TimeTableMaster().addcourse(course.name)
+                print "%s added to timetable." % course.name
+            except IndexError:
+                print "You have not selected a course.\n"
+            do = do[1:]
+        elif do[0].lower() == "tree" or do[0].lower() == "prtree" or do[0].lower() == "tr" or \
+        do[0].lower() == "prereqtree" or do[0].lower() == "prtr":
             try:
                 year = int(do[1])
                 do = do[1:]
@@ -72,10 +103,10 @@ while True:
         elif do[0].lower() == "potree" or do[0].lower() == "postreqtree" or do[0].lower() == "potr":
             try:
                 course.loadpotree()
-                print "\033[K", " " * 16, "\r"
+                print "\033[K", "\r", " " * 16, "\r",
                 stdout.flush()
                 course.printpotree()
-            except IndexError, AttributeError:
+            except (IndexError, AttributeError):
                 print "You have not selected a course.\n"
             do = do[1:]
         elif do[0].lower() == "postreqs" or do[0].lower() == "por":
