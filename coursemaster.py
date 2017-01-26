@@ -49,7 +49,7 @@ class CourseMaster(Borg):
             for tr in td:
                 for x in tr:
                     if x.text_content() == "2":
-                        terms.append(2) 
+                        terms.append(2)
                     if x.text_content() == "1":
                         terms.append(1)
                         #print "Section available in term: " + x.text_content()
@@ -59,7 +59,7 @@ class CourseMaster(Borg):
     def loadpostreqs(self, name):
         page = requests.get("https://courses.students.ubc.ca/cs/main?pname=subjarea&req=1&dept=" + name[:4])
         tree = html.fromstring(page.content)
-        tdd = tree.xpath("//td")
+        tdd  = tree.xpath("//td")
         postreqs = []
         for td in tdd:
             if td.text_content().startswith(name[:4]) and \

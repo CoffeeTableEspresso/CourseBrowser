@@ -83,9 +83,12 @@ while True:
         elif do[0].lower() == "add":
             try:
                 TimeTableMaster().addcourse(course.name)
-                print "%s added to timetable." % course.name
+                print "%s added to timetable.\n" % course.name
             except IndexError:
                 print "You have not selected a course.\n"
+            do = do[1:]
+        elif do[0].lower() == "timetable":
+            TimeTableMaster().drawtimetable()
             do = do[1:]
         elif do[0].lower() == "tree" or do[0].lower() == "prtree" or do[0].lower() == "tr" or \
         do[0].lower() == "prereqtree" or do[0].lower() == "prtr":
